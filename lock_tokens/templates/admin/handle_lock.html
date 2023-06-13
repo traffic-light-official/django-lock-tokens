@@ -1,5 +1,7 @@
+{% load static %}
 {% load lock_tokens_tags %}
 {% lock_tokens_api_client %}
+<script src="{% static 'lock_tokens/js/lifecycle.es5.js' %}"></script> 
 <script type="text/javascript">
     var keep_lock_on_unload = false;
     var valid_token = false;
@@ -35,12 +37,21 @@
             link.onclick = set_keep_lock_on_unload;
         }
     });
+    
+    lifecycle.addEventListener('statechange', function(event) {
 
-    window.onunload = function () {
-      /* Unlock model before leaving page without saving */
-        if (!keep_lock_on_unload && valid_token) {
-            LockTokens.api_client_.async_call_ = false;
-            LockTokens.unlock("{{ app_label }}", "{{ model_name }}", "{{ object_id }}");
-          }
-    };
+        /* Unlock model before leaving page without saving */
+        if (event.newState == 'hidden') {
+            if (!keep_lock_on_unload && valid_token) {
+                LockTokens.unlock("{{ app_label }}", "{{ model_name }}", "{{ object_id }}");
+            }
+        };
+    });
+
+    // window.onunload = function () {
+    //     if (!keep_lock_on_unload && valid_token) {
+    //         LockTokens.api_client_.async_call_ = false;
+    //         LockTokens.unlock("{{ app_label }}", "{{ model_name }}", "{{ object_id }}");
+    //       }
+    // };
 </script>
