@@ -85,7 +85,6 @@ class LockableModel(models.Model):
     @staticmethod
     def _lock(obj, token=None):
         # Token renewing attempt
-        print(f'{token=}\n')
         if token is not None:
             try:
                 lock_token = LockToken.objects.get_for_object(obj)
@@ -93,7 +92,6 @@ class LockableModel(models.Model):
                 raise InvalidToken
             else:
                 if not lock_token.token_str == token:
-                    print(f'{token=} {lock_token.token_str}\n')
                     raise InvalidToken
                 lock_token.renew()
                 return lock_token
