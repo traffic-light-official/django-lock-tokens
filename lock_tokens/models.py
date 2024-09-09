@@ -15,7 +15,7 @@ from lock_tokens.exceptions import (
     UnlockForbiddenError,
 )
 from lock_tokens.managers import LockableModelManager, LockTokenManager
-from lock_tokens.settings import DATEFORMAT, TIMEOUT
+from lock_tokens.settings import TIMEOUT
 from lock_tokens.utils import class_or_bound_method, get_oldest_valid_tokens_datetime
 
 
@@ -53,9 +53,7 @@ class LockToken(models.Model):
     def serialize(self):
         return {
             "token": self.token_str,
-            "expires": datetime.datetime.strftime(
-                self.get_expiration_datetime(), DATEFORMAT
-            ),
+            "expires": self.get_expiration_datetime().isoformat(),
         }
 
     def save(self, *args, **opts):
